@@ -3,6 +3,7 @@ package com.example.quartz.controller;
 import com.example.quartz.entity.StartJobDto;
 import com.example.quartz.job.MyJob;
 import org.quartz.*;
+import org.quartz.impl.calendar.HolidayCalendar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,8 +48,12 @@ public class QuartzController {
             JobDetail jobDetail =  JobBuilder.newJob(getClass(dto.getJobClassName()).getClass())
                     .withIdentity(dto.getJobClassName(), dto.getJobGroupName())
                     .requestRecovery(true)
+                    .usingJobData("name","luffy")
+                    .usingJobData("age",2)
                     .setJobData(dataMap)
+                    .requestRecovery()
                     .build();
+
             //创建CronScheduleBuilder
             CronScheduleBuilder scheduleBuilder =  CronScheduleBuilder.cronSchedule(dto.getCronExpression());
 
@@ -55,9 +61,18 @@ public class QuartzController {
             CronTrigger trigger =  TriggerBuilder.newTrigger()
                     .withIdentity(dto.getJobClassName(), dto.getJobGroupName())
                     .withSchedule(scheduleBuilder)
+                    .startNow()
+                    .endAt(new Date("2020-12-13"))
+                    .modifiedByCalendar("Holidays")
                     .build();
             //调度器关联Job和Trigger
+            HolidayCalendar cal = new HolidayCalendar();
+            cal.addExcludedDate( new Date("2020-06-01") );
+            cal.addExcludedDate( new Date("2020-06-06") );
+            scheduler.addCalendar("Holidays",cal,false,false);
             scheduler.scheduleJob(jobDetail,trigger);
+
+
             resInfo = "success";
         } catch (Exception e) {
             resInfo = "error";
