@@ -71,8 +71,6 @@ public class QuartzController {
             cal.addExcludedDate( new Date("2020-06-06") );
             scheduler.addCalendar("Holidays",cal,false,false);
             scheduler.scheduleJob(jobDetail,trigger);
-
-
             resInfo = "success";
         } catch (Exception e) {
             resInfo = "error";
