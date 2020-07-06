@@ -4,14 +4,25 @@ public class StartJobDto {
 
     private String jobClassName;
 
+    private String jobName;
+
     private String jobGroupName;
 
     private String cronExpression;
 
-    public StartJobDto(String jobClassName, String jobGroupName, String cronExpression) {
+    public StartJobDto(String jobClassName, String jobName, String jobGroupName, String cronExpression) {
         this.jobClassName = jobClassName;
+        this.jobName = jobName;
         this.jobGroupName = jobGroupName;
         this.cronExpression = cronExpression;
+    }
+
+    public String getJobName() {
+        return jobName;
+    }
+
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
     }
 
     public String getJobClassName() {

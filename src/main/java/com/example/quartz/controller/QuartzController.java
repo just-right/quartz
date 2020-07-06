@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,29 +47,28 @@ public class QuartzController {
             scheduler.start();
             //创建JobDetail
             JobDetail jobDetail =  JobBuilder.newJob(getClass(dto.getJobClassName()).getClass())
-                    .withIdentity(dto.getJobClassName(), dto.getJobGroupName())
+                    .withIdentity(dto.getJobName(), dto.getJobGroupName())
                     .requestRecovery(true)
-                    .usingJobData("name","luffy")
+                    .usingJobData("name","jobdetal")
                     .usingJobData("age",2)
-                    .setJobData(dataMap)
                     .requestRecovery()
                     .build();
 
             //创建CronScheduleBuilder
-            CronScheduleBuilder scheduleBuilder =  CronScheduleBuilder.cronSchedule(dto.getCronExpression());
-
+            CronScheduleBuilder scheduleBuilder =  CronScheduleBuilder.cronSchedule(dto.getCronExpression().trim());
             //创建触发器
             CronTrigger trigger =  TriggerBuilder.newTrigger()
-                    .withIdentity(dto.getJobClassName(), dto.getJobGroupName())
-                    .withSchedule(scheduleBuilder)
+                    .withIdentity("trigger:"+dto.getJobName(), dto.getJobGroupName())
                     .startNow()
-                    .endAt(new Date("2020-12-13"))
+                    .usingJobData("name","trigger")
+                    .usingJobData("date",new Date().toString())
+                    .withSchedule(scheduleBuilder)
+                    .endAt(DateFormat.getDateTimeInstance().parse("2020-11-13 23:59:59"))
                     .modifiedByCalendar("Holidays")
                     .build();
             //调度器关联Job和Trigger
             HolidayCalendar cal = new HolidayCalendar();
-            cal.addExcludedDate( new Date("2020-06-01") );
-            cal.addExcludedDate( new Date("2020-06-06") );
+            cal.addExcludedDate( DateFormat.getDateTimeInstance().parse("2020-11-13 23:59:59"));
             scheduler.addCalendar("Holidays",cal,false,false);
             scheduler.scheduleJob(jobDetail,trigger);
             resInfo = "success";

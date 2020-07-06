@@ -14,7 +14,7 @@ import java.util.Properties;
 @Configuration
 public class QuartzConfig {
 
-    @Bean
+    @Bean(name="SchedulerFactory")
     public SchedulerFactoryBean getSchedulerFactory() throws IOException {
         SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
         schedulerFactoryBean.setQuartzProperties(quartzProperties());
@@ -24,7 +24,7 @@ public class QuartzConfig {
     @Bean
     public Properties quartzProperties() throws IOException {
         PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
-        propertiesFactoryBean.setLocation(new ClassPathResource("/quartz.properties"));
+        propertiesFactoryBean.setLocation(new ClassPathResource("/application.yaml"));
         //在quartz.properties中的属性被读取并注入后再初始化对象
         propertiesFactoryBean.afterPropertiesSet();
         return propertiesFactoryBean.getObject();
