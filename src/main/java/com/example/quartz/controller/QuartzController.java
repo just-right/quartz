@@ -15,19 +15,6 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-/**
- * https://www.w3cschool.cn/quartz_doc/
- *
- * https://www.cnblogs.com/loong-hon/p/10912741.html
- *
- * https://www.jianshu.com/p/ce4c4400eea2
- *
- * https://github.com/tjfy1992/SpringBootQuartz
- *
- * https://cron.qqe2.com/
- *
- */
 @RestController
 @RequestMapping("/quartz")
 public class QuartzController {
